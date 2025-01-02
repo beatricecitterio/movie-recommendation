@@ -80,7 +80,6 @@ def suggestion(new_rating: list, genre: str, n = 5, number_of_suggestions = 3):
     print(f'Most similar user ID: {most_similar_user}') 
 
     user_ratings = ratings[ratings['userId'].isin(most_similar_users)]
-    #user_ratings = ratings[ratings['userId'] == most_similar_user] #prendo i movies visti dai most similar users
     movies_by_genre = movies[movies['genres'].str.contains(genre, case=False)] #seleziono dal mio dataset originale i movies in base al genere scelto
     user_ratings = user_ratings[user_ratings['movieId'].isin(movies_by_genre.movieId)] #tengo dei movies visti dai miei most similar quelli di quel genere
 
@@ -88,6 +87,8 @@ def suggestion(new_rating: list, genre: str, n = 5, number_of_suggestions = 3):
 
 
     suggested_movies = user_ratings_filtered[~user_ratings_filtered['movieId'].isin(new_rating_filtered.keys())] #prendo quelli che non ha visto
+    suggested_movies = suggested_movies.sort_values(by = 'movieId')
+    #suggested_movies['rating']=suggested_movies.groupby('movieId')['rating'].transform('mean')
     suggested_movies = suggested_movies.merge(movie_counts).sort_values(by = ['rating', 'count'], ascending=False) #ci aggiungo il count e ranko per rating del mio most similar, e poi per popularità
     # Select the first `n` rows, dropping duplicates based on the 'movieId' column
     final_suggestions_df = suggested_movies.drop_duplicates(subset='movieId').head(number_of_suggestions) #keeps the highest rating, but i don't think it matters now
@@ -102,3 +103,5 @@ def suggestion(new_rating: list, genre: str, n = 5, number_of_suggestions = 3):
     mustsee_suggestions=movies[movies['movieId'].isin(mustsee_suggestions_df.movieId)]['Formatted Title']
 
     return final_suggestions, mustsee_suggestions
+
+suggestion([5,5,5,5,5], 'Animation')
