@@ -1,9 +1,39 @@
 import pandas as pd
 from sklearn.metrics.pairwise import euclidean_distances
 import numpy as np
+import re
 
-ratings = pd.read_csv('/Users/matildedolfato/Desktop/magistrai/soft_eng/project/ratings.csv')
-movies = pd.read_csv('/Users/matildedolfato/Desktop/magistrai/soft_eng/project/movies.csv')
+
+ratings = pd.read_csv('/Users/beatricecitterio/ratings.csv')
+movies = pd.read_csv('/Users/beatricecitterio/movies.csv')
+
+
+def format_title(title):
+    # Remove specific (a.k.a. ...) patterns
+    title = re.sub(r'\(a\.k\.a\..*?\)', '', title).strip()
+    
+    # Remove trailing year (e.g., "(1994)")
+    title = re.sub(r'\(\d{4}\)', '', title).strip()
+    
+    # Handle cases like "Shawshank Redemption, The" → "The Shawshank Redemption"
+    match = re.match(r'(.+), The$', title)
+    if match:
+        return f"The {match.group(1)}"
+    
+    match = re.match(r'(.+), A$', title)
+    if match:
+        return f"A {match.group(1)}"
+    
+    match = re.match(r'(.+), An$', title)
+    if match:
+        return f"An {match.group(1)}"
+    
+    # Return cleaned-up title
+    return title.strip()
+
+
+movies['Formatted Title'] = movies['title'].apply(format_title)
+
 
 ratings = ratings.drop(columns='timestamp')
 
@@ -23,7 +53,7 @@ for genre in genres:
         top_movies[genre] = genre_movies.nlargest(20, 'count')
 
 def movies_to_rate(genre: str, n = 10):
-    return list(top_movies[genre][:n].title)
+    return list(top_movies[genre][:n]['Formatted Title'])
 
 #here we assume to have n, x (num suggestions), genre (str), ratings (new_rating list)
 
@@ -62,13 +92,13 @@ def suggestion(new_rating: list, genre: str, n = 5, number_of_suggestions = 3):
     # Select the first `n` rows, dropping duplicates based on the 'movieId' column
     final_suggestions_df = suggested_movies.drop_duplicates(subset='movieId').head(number_of_suggestions) #keeps the highest rating, but i don't think it matters now
     final_suggestions_df
-    final_suggestions = movies[movies['movieId'].isin(final_suggestions_df.movieId)].title #ritorno il titolo degli x film rated meglio- piu popolari
+    final_suggestions = movies[movies['movieId'].isin(final_suggestions_df.movieId)]['Formatted Title'] #ritorno il titolo degli x film rated meglio- piu popolari
 
     # voglio fare un dataset con i piu visti di quel genere togliendo quelli che ha rated e quelli già consigliati FREGANDOCENE DI RATING!! I PIU SEEN!
     # ha senso fare questa dopo la prima, perche nella prima li ordino prima per similarity poi per rating e solo alla fine per count 
     mustsee_suggestions_bygenre=movies_by_genre[~movies_by_genre['movieId'].isin(new_rating_filtered.keys()) 
                                            & ~movies_by_genre['movieId'].isin(final_suggestions_df['movieId'])]
     mustsee_suggestions_df=mustsee_suggestions_bygenre.merge(movie_counts).sort_values(by = ['count'], ascending=False).head(number_of_suggestions)
-    mustsee_suggestions=movies[movies['movieId'].isin(mustsee_suggestions_df.movieId)].title
+    mustsee_suggestions=movies[movies['movieId'].isin(mustsee_suggestions_df.movieId)]['Formatted Title']
 
     return final_suggestions, mustsee_suggestions
