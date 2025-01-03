@@ -4,8 +4,8 @@ import numpy as np
 import re
 
 
-ratings = pd.read_csv('/Users/beatricecitterio/ratings.csv')
-movies = pd.read_csv('/Users/beatricecitterio/movies.csv')
+ratings = pd.read_csv('/Users/matildedolfato/Desktop/magistrai/soft_eng/project/ratings.csv')
+movies = pd.read_csv('/Users/matildedolfato/Desktop/magistrai/soft_eng/project/movies.csv')
 
 
 def format_title(title):

@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from suggestion_alg import movies_to_rate, suggestion
 import webbrowser
+from PIL import Image
 
 def create_scrollable_frame(root):
     canvas = tk.Canvas(root, bg="white")
@@ -70,7 +71,7 @@ def open_rating_page():
 
     movies = movies_to_rate(genre, num_ratings) #where do we get the num ratings var?
     for movie in movies:
-        tk.Label(root, text=movie, font=("Helvetica", 14), bg="white").pack(pady=2)
+        tk.Label(root, text=movie, font=("Helvetica", 14), bg="white", fg="black").pack(pady=2)
         entry = tk.Entry(root)
         entry.pack(pady=2)
         rating_entries[movie] = entry
@@ -89,6 +90,33 @@ def open_rating_page():
 
 # Process ratings before moving to recommendation page
 def process_ratings():
+    # Clear previous entries
+    # for widget in root.winfo_children():
+    #     widget.destroy() #we clear previous widgets to create the new page
+
+    #Insert GIF 
+    # download GIF here: https://images.app.goo.gl/wfK7KAYZPbeEAnF79
+    # file = "/Users/matildedolfato/Desktop/popcorns.gif"
+    # info = Image.open(file)
+    # frames = info.n_frames  # number of frames
+    # photoimage_objects = []
+    # for i in range(frames):
+    #     obj = tk.PhotoImage(file=file, format=f"gif -index {i}")
+    #     photoimage_objects.append(obj)
+
+    # def animation(current_frame=0):
+    #     global loop
+    #     image = photoimage_objects[current_frame]
+    #     gif_label.configure(image=image)
+    #     current_frame = current_frame + 1
+    #     if current_frame == frames:
+    #         current_frame = 0
+    #     loop = root.after(info.info['duration'] , lambda: animation(current_frame))
+
+    # gif_label = tk.Label(root, image="")
+    # gif_label.pack()
+    # animation()
+
     global user_ratings
     user_ratings = []
     try:
@@ -149,7 +177,7 @@ def open_recommendation_page():
         tk.Label(scrollable_frame, text=f"Length: {movie_info['Length (min)']} mins", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
         tk.Label(scrollable_frame, text=f"Director: {movie_info['Director']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
         tk.Label(scrollable_frame, text=f"Actors: {movie_info['Actors']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(scrollable_frame, text=f"Plot: {movie_info['Plot']}", wraplength=500, font=("Helvetica", 14, "italic"), fg="black", bg="white").pack(pady=5)
+        tk.Label(scrollable_frame, text=f"Plot: {movie_info['Plot']}", wraplength=500, font=("Helvetica", 14, "italic"), fg="black", bg="white").pack(pady=10)
         
     # Trailer Link
         trailer_url = movie_info['Trailer URL']
@@ -200,10 +228,10 @@ root.configure(bg="white") #configure background
 
 # botton_frame = tk.Frame(root, bg="ivory")
 # botton_frame.pack(expand=True, fill='both', padx=20, pady=20) #configure background frame 
-heading = tk.Label(root, text="Welcome to our new movie reco system!", font=("Impact", 24, "bold"), fg="darkred", bg="white")
+heading = tk.Label(root, text="Welcome to our new movie reco system!", font=("helvetica", 24, "bold"), fg="darkred", bg="white")
 heading.pack(pady=30) #place heading on the frame, with style
 
-start_button = tk.Button(root, text="Snacks ready, let's choose the movie", font=("Helvetica", 12),fg="darkred",bg="white",relief="flat",borderwidth=0, command=open_genre_page)
+start_button = tk.Button(root, text="Snacks ready, let's choose the movie", font=("Helvetica", 17, "bold"),fg="darkred",bg="white",relief="flat",borderwidth=0, command=open_genre_page)
 start_button.pack(pady=20)
 
 #global styles 
