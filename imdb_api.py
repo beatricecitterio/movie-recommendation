@@ -17,7 +17,6 @@ def fetch_movie_info(query):
             'Director': 'N/A',
             'Actors': 'N/A',
             'Plot': 'No description available.',
-            'Poster URL': 'No Image Available',
             'Trailer URL': 'No trailer available'
         }
     

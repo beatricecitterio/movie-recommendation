@@ -9,13 +9,12 @@ movies = pd.read_csv('/Users/beatricecitterio/movies.csv')
 
 
 def format_title(title):
-    # Remove specific (a.k.a. ...) patterns
+    # remove (a.k.a. ...) patterns
     title = re.sub(r'\(a\.k\.a\..*?\)', '', title).strip()
     
-    # Remove trailing year (e.g., "(1994)")
+    # remove year (e.g., "(1994)")
     title = re.sub(r'\(\d{4}\)', '', title).strip()
     
-    # Handle cases like "Shawshank Redemption, The" → "The Shawshank Redemption"
     match = re.match(r'(.+), The$', title)
     if match:
         return f"The {match.group(1)}"
@@ -28,7 +27,6 @@ def format_title(title):
     if match:
         return f"An {match.group(1)}"
     
-    # Return cleaned-up title
     return title.strip()
 
 
@@ -71,13 +69,13 @@ def suggestion(new_rating: list, genre: str, n = 5, number_of_suggestions = 3):
     dissimilarities = euclidean_distances(pivot_df, new_user_ratings) 
     # print('length dissimilrities:',len(dissimilarities)) 
     # num users is 118301
-    print(dissimilarities)
+    # print(dissimilarities)
 
-    most_similar_user = pivot_df.index[np.argmin(dissimilarities)]
+    # most_similar_user = pivot_df.index[np.argmin(dissimilarities)]
     most_similar_users = pivot_df.index[np.argsort(dissimilarities.flatten())[:20]]
 
 
-    print(f'Most similar user ID: {most_similar_user}') 
+    # print(f'Most similar user ID: {most_similar_user}') 
 
     user_ratings = ratings[ratings['userId'].isin(most_similar_users)]
     movies_by_genre = movies[movies['genres'].str.contains(genre, case=False)] #seleziono dal mio dataset originale i movies in base al genere scelto
@@ -88,7 +86,7 @@ def suggestion(new_rating: list, genre: str, n = 5, number_of_suggestions = 3):
 
     suggested_movies = user_ratings_filtered[~user_ratings_filtered['movieId'].isin(new_rating_filtered.keys())] #prendo quelli che non ha visto
     suggested_movies = suggested_movies.sort_values(by = 'movieId')
-    #suggested_movies['rating']=suggested_movies.groupby('movieId')['rating'].transform('mean')
+    suggested_movies['rating']=suggested_movies.groupby('movieId')['rating'].transform('mean')
     suggested_movies = suggested_movies.merge(movie_counts).sort_values(by = ['rating', 'count'], ascending=False) #ci aggiungo il count e ranko per rating del mio most similar, e poi per popularità
     # Select the first `n` rows, dropping duplicates based on the 'movieId' column
     final_suggestions_df = suggested_movies.drop_duplicates(subset='movieId').head(number_of_suggestions) #keeps the highest rating, but i don't think it matters now
