@@ -1,12 +1,15 @@
 from imdb_api import fetch_movie_info
 from suggestion_alg import format_title
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, PhotoImage
 import pandas as pd
 import numpy as np
 from suggestion_alg import movies_to_rate, suggestion
 import webbrowser
-from PIL import Image
+from PIL import Image, ImageTk
+import requests
+from io import BytesIO
+import webbrowser
 
 def create_scrollable_frame(root):
     canvas = tk.Canvas(root, bg="white")
@@ -33,7 +36,7 @@ def open_genre_page():
         widget.destroy() #we clear previous widgets to create the new page
 
     # First Page - Genre and Number of Ratings Selection
-    tk.Label(root, text="Which genre are you in the mood for?",font=("Helvetica", 20), fg="darkred", bg="white" ).pack(pady=20) # we add to the root the label select genre, with some space (padding, pady) around it
+    tk.Label(root, text="Which genre are you in the mood for?",font=("Helvetica", 20, 'bold'), fg="darkred", bg="white" ).pack(pady=20) # we add to the root the label select genre, with some space (padding, pady) around it
     global genre_var
     genre_var = tk.StringVar() #create genre var where some input will be stored
     genres = ['Action', 'Adventure', 'Animation', 'Children', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western', 'Any Genre']
@@ -42,7 +45,7 @@ def open_genre_page():
     genre_dropdown.current(0) #i think here 'Action' will show up, whereas we could add something like empty space or 'select genre' or something else
 
     # Number of Ratings Selection
-    tk.Label(root, text="Choose the number of movies to rate:",font=("Helvetica", 20), fg="darkred", bg="white").pack(pady=15) #same logic to create 
+    tk.Label(root, text="Choose the number of movies to rate:",font=("Helvetica", 16, 'bold'), fg="darkred", bg="white").pack(pady=15) #same logic to create 
     global num_ratings_var
     num_ratings_var = tk.IntVar()
     num_ratings_var.set(5) #sure needed? but doesn't hurt
@@ -66,8 +69,8 @@ def open_rating_page():
     # Movie Ratings Input
     global rating_entries
     rating_entries = {}
-    tk.Label(root, text="Rate the following movies:", font=("Helvetica", 20), fg="darkred", bg="white").pack(pady=(20, 5))
-    tk.Label(root, text="(0-5, 0.5 increments, or 'Not seen')", font=("Helvetica", 15), fg="darkred", bg="white").pack(pady=(5, 10))
+    tk.Label(root, text="Rate the following movies:", font=("Helvetica", 20, 'bold'), fg="darkred", bg="white").pack(pady=(20, 5))
+    tk.Label(root, text="From 0 to 5, .5 increments are allowed, or 'Not seen'", font=("Helvetica", 15), fg="darkred", bg="white").pack(pady=(5, 10))
 
     movies = movies_to_rate(genre, num_ratings) #where do we get the num ratings var?
     for movie in movies:
@@ -77,7 +80,7 @@ def open_rating_page():
         rating_entries[movie] = entry
 
     # Number of Recommendations Selection
-    tk.Label(root, text="How many suggestions would you like to get?", font=("Helvetica", 20), fg="darkred", bg="white").pack(pady=(15,5))
+    tk.Label(root, text="How many suggestions would you like to get?", font=("Helvetica", 16, 'bold'), fg="darkred", bg="white").pack(pady=(15,5))
     global num_suggestions_var
     num_suggestions_var = tk.IntVar()
     num_suggestions_var.set(3)
@@ -149,13 +152,13 @@ def open_recommendation_page():
     recommended_movies, mustsee_movies = suggestion(user_ratings, genre, len(user_ratings), num_suggestions)
 
     # Header
-    tk.Label(scrollable_frame, text="Recommended movies for you!", font=("Helvetica", 24, "bold"), fg="darkred", bg="white").pack(pady=(20, 10))
-    tk.Label(scrollable_frame, text="Based on your likings and mood:", font=("Helvetica", 20, "bold"), fg="darkred", bg="white").pack(pady=(10, 5))
+    tk.Label(scrollable_frame, text="Recommended movies for you!", font=("Helvetica", 24, "bold"), fg="darkred", bg="white", anchor="w", justify="left").pack(pady=(20, 10), anchor='w')
+    tk.Label(scrollable_frame, text="Based on your likings and mood:", font=("Helvetica", 20, "bold"), fg="darkred", bg="white", anchor="w", justify="left").pack(pady=(10, 5), anchor='w')
 
     # Display Recommendations with Details
     for movie in recommended_movies:
         # Fetch additional details
-        movie_info = fetch_movie_info(format_title(movie))  # Format and fetch movie info
+        movie_info = fetch_movie_info(format_title(movie))
 
         if not movie_info:
             movie_info = {
@@ -169,52 +172,89 @@ def open_recommendation_page():
                 'Trailer URL': 'No trailer available'
             }
 
-        # Title
-        tk.Label(scrollable_frame, text=movie_info['Title'], font=("Helvetica", 16, "bold"), fg="darkblue", bg="white").pack(pady=(10, 2))
+        # Movie Frame
+        movie_frame = tk.Frame(scrollable_frame, bg='white')
+        movie_frame.pack(pady=10, padx=10, anchor='w', fill='x')
 
         # Details
-        # tk.Label(scrollable_frame, text=f"Genre: {movie_info['Genres']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(scrollable_frame, text=f"Length: {movie_info['Length (min)']} mins", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(scrollable_frame, text=f"Director: {movie_info['Director']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(scrollable_frame, text=f"Actors: {movie_info['Actors']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(scrollable_frame, text=f"Plot: {movie_info['Plot']}", wraplength=500, font=("Helvetica", 14, "italic"), fg="black", bg="white").pack(pady=10)
-        
-    # Trailer Link
-        trailer_url = movie_info['Trailer URL']
-        link = tk.Label(scrollable_frame, text="Watch Trailer", font=("Helvetica", 14, "underline"), fg="blue", bg='white', cursor="hand2")
-        link.pack(pady=5)
-        link.bind("<Button-1>", lambda e, url=trailer_url: webbrowser.open(url))
+        details_frame = tk.Frame(movie_frame, bg='white', height=200)  # Fixed height
+        details_frame.grid(row=0, column=1, sticky='w')
 
-
-    # Must-see Movies Section
-    must_see_frame = tk.Frame(scrollable_frame, bg='white')
-    must_see_frame.pack(pady=(20, 10), padx=10, anchor="center")  # Center-align it
-
-    # Title for must-see section
-    tk.Label(must_see_frame, text="And some must-sees!", 
-            font=("Helvetica", 20, "bold"), fg='darkred', bg='white').pack(pady=(10, 5))
-
-    for movie in mustsee_movies:
-        # Fetch additional details
-        movie_info = fetch_movie_info(format_title(movie))  # Format and fetch movie info
-
-        # Title
-        tk.Label(must_see_frame, text=movie_info['Title'], font=("Helvetica", 16, "bold"), fg="darkblue", bg="white").pack(pady=(10, 2))
-
-        # Details
-        # tk.Label(must_see_frame, text=f"Genre: {movie_info['Genres']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(must_see_frame, text=f"Length: {movie_info['Length (min)']} mins", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(must_see_frame, text=f"Director: {movie_info['Director']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(must_see_frame, text=f"Actors: {movie_info['Actors']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2)
-        tk.Label(must_see_frame, text=f"Plot: {movie_info['Plot']}", wraplength=500, font=("Helvetica", 14, "italic"), fg="black", bg="white").pack(pady=5)
+        tk.Label(details_frame, text=movie_info['Title'], font=("Helvetica", 16, "bold"), fg="darkblue", bg="white").pack(pady=(10, 2), anchor='w')
+        tk.Label(details_frame, text=f"Length: {movie_info['Length (min)']} mins", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
+        tk.Label(details_frame, text=f"Director: {movie_info['Director']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
+        tk.Label(details_frame, text=f"Actors: {movie_info['Actors']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
+        tk.Label(details_frame, text=f"Plot: {movie_info['Plot']}", wraplength=500, font=("Helvetica", 14, "italic"), fg="black", bg="white").pack(pady=5, anchor='w')
+        tk.Label(details_frame, text=f"You can find the movie on: {movie_info['Platforms']}", wraplength=500, font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
 
         # Trailer Link
         trailer_url = movie_info['Trailer URL']
-        link = tk.Label(must_see_frame, text="Watch Trailer", font=("Helvetica", 14, "underline"), fg="blue", bg='white', cursor="hand2")
-        link.pack(pady=5)
+        link = tk.Label(details_frame, text="Watch Trailer", font=("Helvetica", 14, "underline"), fg="blue", bg='white', cursor="hand2")
+        link.pack(pady=5, anchor='w')
         link.bind("<Button-1>", lambda e, url=trailer_url: webbrowser.open(url))
 
-    scrollable_frame.update_idletasks()  # Force redraw of all widgets
+        # Poster
+        poster_url = movie_info['Poster URL']
+        try:
+            response = requests.get(poster_url)
+            img_data = BytesIO(response.content)
+            img = Image.open(img_data)
+            img = img.resize((150, 200), Image.Resampling.LANCZOS)
+            poster_img = ImageTk.PhotoImage(img)
+            poster_label = tk.Label(movie_frame, image=poster_img, bg='white')
+            poster_label.image = poster_img
+            poster_label.grid(row=0, column=0, padx=10, sticky='w')
+        except:
+            pass
+
+    # Must-see Movies Section
+    must_see_frame = tk.Frame(scrollable_frame, bg='white')
+    must_see_frame.pack(pady=(20, 10), padx=10, anchor="w", fill='x')
+
+    # Title for must-see section
+    tk.Label(must_see_frame, text="And some must-sees!", 
+            font=("Helvetica", 20, "bold"), fg='darkred', bg='white', anchor='w', justify='left').pack(pady=(10, 5), anchor='w')
+
+
+    for movie in mustsee_movies:
+        movie_info = fetch_movie_info(format_title(movie))
+
+        # Movie Frame
+        movie_frame = tk.Frame(must_see_frame, bg='white')
+        movie_frame.pack(pady=10, padx=10, anchor='w', fill='x')
+
+        # Details
+        details_frame = tk.Frame(movie_frame, bg='white', height=200)  # Fixed height
+        details_frame.grid(row=0, column=1, sticky='w')
+
+        tk.Label(details_frame, text=movie_info['Title'], font=("Helvetica", 16, "bold"), fg="darkblue", bg="white").pack(pady=(10, 2), anchor='w')
+        tk.Label(details_frame, text=f"Length: {movie_info['Length (min)']} mins", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
+        tk.Label(details_frame, text=f"Director: {movie_info['Director']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
+        tk.Label(details_frame, text=f"Actors: {movie_info['Actors']}", font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
+        tk.Label(details_frame, text=f"Plot: {movie_info['Plot']}", wraplength=500, font=("Helvetica", 14, "italic"), fg="black", bg="white").pack(pady=5, anchor='w')
+        tk.Label(details_frame, text=f"You can find the movie on: {movie_info['Platforms']}", wraplength=500, font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
+
+        # Poster
+        poster_url = movie_info['Poster URL']
+        try:
+            response = requests.get(poster_url)
+            img_data = BytesIO(response.content)
+            img = Image.open(img_data)
+            img = img.resize((150, 200), Image.Resampling.LANCZOS)
+            poster_img = ImageTk.PhotoImage(img)
+            poster_label = tk.Label(movie_frame, image=poster_img, bg='white')
+            poster_label.image = poster_img
+            poster_label.grid(row=0, column=0, padx=10, sticky='w')
+        except:
+            pass
+
+        # Trailer Link
+        trailer_url = movie_info['Trailer URL']
+        link = tk.Label(details_frame, text="Watch Trailer", font=("Helvetica", 14, "underline"), fg="blue", bg='white', cursor="hand2")
+        link.pack(pady=5, anchor='w')
+        link.bind("<Button-1>", lambda e, url=trailer_url: webbrowser.open(url))
+
+    scrollable_frame.update_idletasks()
     scrollable_frame.master.configure(scrollregion=scrollable_frame.master.bbox("all"))
 
 
@@ -224,14 +264,21 @@ root.title("Movie Recommendation System")
 root.geometry("600x600") #penso sia una sorta di titolo 
 root.configure(bg="white") #configure background
 
-# Starting Page 
+# Starting Page
 
 # botton_frame = tk.Frame(root, bg="ivory")
 # botton_frame.pack(expand=True, fill='both', padx=20, pady=20) #configure background frame 
-heading = tk.Label(root, text="Welcome to our new movie reco system!", font=("helvetica", 24, "bold"), fg="darkred", bg="white")
+heading = tk.Label(root, text="Welcome to our movie recommendation system!", font=("helvetica", 24, "bold"), fg="darkred", bg="white")
 heading.pack(pady=30) #place heading on the frame, with style
 
-start_button = tk.Button(root, text="Snacks ready, let's choose the movie", font=("Helvetica", 17, "bold"),fg="darkred",bg="white",relief="flat",borderwidth=0, command=open_genre_page)
+# Add an image at the top of the page
+image = Image.open("cinema.jpeg") 
+image = image.resize((300, 200))  # Resize image if needed
+photo = ImageTk.PhotoImage(image)
+tk.Label(root, image=photo, bg="white").pack(pady=10)
+root.image = photo  # Keep a reference to avoid garbage collection
+
+start_button = tk.Button(root, text="Snacks ready, let's choose the movie", font=("Helvetica", 16, "bold"),fg="darkblue",bg="white",relief="flat",borderwidth=0, command=open_genre_page)
 start_button.pack(pady=20)
 
 #global styles 
