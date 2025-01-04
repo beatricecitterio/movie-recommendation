@@ -1,5 +1,4 @@
 import requests
-import pandas as pd
 
 API_KEY = 'ab012f78ec043a753602ee6d9b8383f4'
 BASE_URL = 'https://api.themoviedb.org/3'

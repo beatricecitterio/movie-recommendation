@@ -1,10 +1,7 @@
 from imdb_api import fetch_movie_info
-from suggestion_alg import format_title
+from suggestion_alg import format_title, movies_to_rate, suggestion
 import tkinter as tk
-from tkinter import ttk, messagebox, PhotoImage
-import pandas as pd
-import numpy as np
-from suggestion_alg import movies_to_rate, suggestion
+from tkinter import ttk, messagebox
 import webbrowser
 from PIL import Image, ImageTk
 import requests
@@ -52,7 +49,7 @@ def open_genre_page():
     ttk.Radiobutton(root, text="5", variable=num_ratings_var, value=5, style="TRadiobutton").pack(pady=5)
     ttk.Radiobutton(root, text="10", variable=num_ratings_var, value=10, style="TRadiobutton").pack(pady=5)
     # Next Button
-    tk.Button(root, text="Next", command=open_rating_page).pack(pady=20) 
+    tk.Button(root, text="Next", command=open_rating_page, relief="flat").pack(pady=20) 
     return num_ratings_var, genre_var
 
 
@@ -89,7 +86,7 @@ def open_rating_page():
     ttk.Radiobutton(root, text="5", variable=num_suggestions_var, value=5, style="TRadiobutton").pack()
 
     # Recommend Button
-    tk.Button(root, text="Next", command=process_ratings).pack(pady=20)
+    tk.Button(root, text="Next", command=process_ratings, relief="flat").pack(pady=20)
 
 # Process ratings before moving to recommendation page
 def process_ratings():
