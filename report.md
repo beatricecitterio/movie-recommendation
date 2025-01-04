@@ -8,7 +8,7 @@ The GUI is a sequence of multiple windows: in the first ones the user inserts wh
 
 The biggest issue with our project is the running time: to open the GUI and to process the final window, the program takes some seconds.  
 We believe that this problem is related to the Tkinter Python module, used to build the GUI, which is arguably slow to run. Also, it could be due to data extraction from the internet, but our best guess remains the first. The algorithm itself outputs movie suggestions immediately if ran independently from the GUI, thus it is not the problem for sure.   
-We partly tackled this problem displaying a funny gif during the longest process, in order for the user to be entratained during the waiting time. 
+We thought of partly tackling this problem displaying a funny gif during the longest process, in order for the user to be entratained during the waiting time. 
 
 As we were working on this project, some ideas came to our mind. Some of them are implemented, like to provide the user with the trailer and average rating of the movie suggested, to help them choose.
 Moreover, we think the reco system could be further implemented as a website or an extension for common research engines like Google, so that it would be more accessible and practical to use.  
