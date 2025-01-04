@@ -4,7 +4,7 @@ import numpy as np
 import re
 
 # WRITE THE PATH WHERE THE CSV ARE STORED HERE
-path = 'Users/beatricecitterio'
+path = '/Users/beatricecitterio'
 
 ratings = pd.read_csv(f'{path}/ratings.csv')
 movies = pd.read_csv(f'{path}/movies.csv')
