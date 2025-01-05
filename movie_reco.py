@@ -1,4 +1,4 @@
-from imdb_api import fetch_movie_info
+from tmdb_api import fetch_movie_info
 from suggestion_alg import format_title, movies_to_rate, suggestion
 import tkinter as tk
 from tkinter import ttk, messagebox
