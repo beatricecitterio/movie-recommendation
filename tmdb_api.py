@@ -5,13 +5,15 @@ BASE_URL = 'https://api.themoviedb.org/3'
 
 
 def fetch_movie_info(query):
+    '''
+    This function takes as input a movie title and outputs information on that movie fetched from TMDb.
+    '''
     search_url = f"{BASE_URL}/search/movie?api_key={API_KEY}&query={query}"
     search_response = requests.get(search_url).json()
 
     if not search_response['results']:
         return {
             'Title': query,
-            'Genres': 'N/A',
             'Length (min)': 'N/A',
             'Director': 'N/A',
             'Actors': 'N/A',
@@ -30,8 +32,6 @@ def fetch_movie_info(query):
 
     length = details_response['runtime']
 
-    genres = [genre['name'] for genre in details_response['genres']]
-
     poster_path = details_response.get('poster_path')
     poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else 'No poster available'
 
@@ -47,7 +47,6 @@ def fetch_movie_info(query):
 
     return {
         'Title': title,
-        'Genres': ', '.join(genres),
         'Actors': ', '.join(actors),
         'Plot': plot,
         'Length (min)': length,
@@ -72,7 +71,7 @@ def fetch_platforms(movie_id):
     url = f"{BASE_URL}/movie/{movie_id}/watch/providers?api_key={API_KEY}"
     response = requests.get(url).json()
 
-    results = response.get('results', {}).get('US', {}).get('flatrate', [])
+    results = response.get('results', {}).get('IT', {}).get('flatrate', [])
 
     if not results:
         return 'No platform information available'
