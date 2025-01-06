@@ -21,16 +21,19 @@ Then, we consider the 20 users who are most similar to new_user, in terms of tas
 
 Finally, we decided to also include some must-see suggestions to the user, i.e. the most popular movies of the genre they selected, excluding clearly the movies that they have already rated.
 
-### tmdb_api.py
+### **tmdb_api.py**
 The purpose of this file is to fetch some data from the TMDb (The Movie Database) API. In particular, for each movie, the script retrieves information about the title, the runtime, the director, the main actors. It provides also an overview of the plot, the link to the trailer and to the poster image and, finally, the list of streaming platforms it is available on. <br>
 
 This information is used in the suggestion page of our recommendation system. <br>
 
 Besides the main function, ```fetch_movie_info()```, the script also includes two helper functions, ```fetch_trailer()``` and ```fetch_platforms()```, which fetch, respectively, the URL of the trailer on YouTube and the platforms on which the movie is available.
 
-### movie_reco.py
+### **movie_reco.py**
+This file implements the GUI of our application, using Python's Tkinter library. We decided to build a multipage GUI as follows:
+- **welcome page**: contains a message and a picture (cinema.jpeg). There is a start button which takes the user to the next page
+- **genre selection page**: this page is made of a dropdown menu where the user can choose one of the available genres. Then, the user has the possibility to choose the number of movies to rate (either 5 or 10, for a more accurate suggestion). The ```next``` button takes the user to the rating page
+- **movie rating page**: this page displays a list of the most popular movies of the selected genre. The user is supposed to rate them from 0 to 5 (only .5 increments are allowed), or write 'Not seen'. Finally, the user can choose how many suggestions to receive, and the ```next``` takes them to the next page.
+- **recommendation page**: the ```process_ratings()``` function collects the input of the user and validates it. If valid, user is taken to the recommendation page, where the output of ```suggestion()``` is showed. In particular, for each movie, the graphic also displays a series of additional information, such as movie poster, actors, director, length, plot...
 
-### cinema.jpeg
-
-## Bibliography
+## **Bibliography**
 F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets: History and Context. ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4: 19:1–19:19. https://doi.org/10.1145/2827872
