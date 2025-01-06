@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Recommendation System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .not-seen {
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .not-seen.selected {
+            background-color: #1a365d;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="container mx-auto px-4 py-8 text-center">
+        <h1 class="text-4xl font-bold text-red-900 mb-8">Welcome to our movie recommendation system!</h1>
+        <img src="/static/cinema.gif" alt="Cinema" class="mx-auto mb-8 rounded-lg shadow-lg" style="max-width: 400px;">
+        <button onclick="showGenrePage()" class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition">
+            Snacks ready, let's choose the movie
+        </button>
+    </div>
+
+    <!-- Loading Page -->
+    <div id="loadingPage" class="hidden container mx-auto px-4 py-8 text-center">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8">Wait for it...</h2>
+        <img src="/static/loading.gif" alt="Loading" class="mx-auto rounded-lg shadow-lg" style="max-width: 300px;">
+    </div>
+
+
+    <div id="genrePage" class="hidden container mx-auto px-4 py-8">
+        <h2 class="text-3xl font-bold text-red-900 mb-6">Which genre are you in the mood for?</h2>
+        <select id="genreSelect" class="block w-64 mb-6 p-2 border rounded">
+            <option value="Action">Action</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Animation">Animation</option>
+            <!-- Add other genres -->
+        </select>
+
+        <h3 class="text-2xl font-bold text-red-900 mb-4">Choose the number of movies to rate:</h3>
+        <div class="mb-6">
+            <label class="block mb-2">
+                <input type="radio" name="numRatings" value="5" checked> 5
+            </label>
+            <label class="block">
+                <input type="radio" name="numRatings" value="10"> 10
+            </label>
+        </div>
+
+        <button onclick="getMoviesToRate()" class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800">
+            Next
+        </button>
+    </div>
+
+    <div id="ratingPage" class="hidden container mx-auto px-4 py-8">
+        <h2 class="text-3xl font-bold text-red-900 mb-6">Rate the following movies:</h2>
+        <p class="text-lg text-gray-700 mb-8">Select a rating from 0 to 5 stars, or choose 'Not seen'</p>
+        <div id="movieList" class="space-y-8"></div>
+
+        <h3 class="text-2xl font-bold text-red-900 mt-8 mb-4">How many suggestions would you like to get?</h3>
+        <div class="mb-6">
+            <label class="block mb-2">
+                <input type="radio" name="numSuggestions" value="1"> 1
+            </label>
+            <label class="block mb-2">
+                <input type="radio" name="numSuggestions" value="3" checked> 3
+            </label>
+            <label class="block">
+                <input type="radio" name="numSuggestions" value="5"> 5
+            </label>
+        </div>
+
+        <button onclick="getRecommendations()" class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800">
+            Get Recommendations
+        </button>
+    </div>
+
+    <div id="recommendationsPage" class="hidden container mx-auto px-4 py-8">
+        <h2 class="text-3xl font-bold text-red-900 mb-6">Recommended movies for you!</h2>
+        <div id="recommendedMovies" class="space-y-8"></div>
+
+        <h2 class="text-3xl font-bold text-red-900 mt-12 mb-6">And some must-sees!</h2>
+        <div id="mustSeeMovies" class="space-y-8"></div>
+    </div>
+
+    <script>
+        function showGenrePage() {
+            document.getElementById('welcomePage').classList.add('hidden');
+            document.getElementById('genrePage').classList.remove('hidden');
+        }
+
+        async function getMoviesToRate() {
+            const genre = document.getElementById('genreSelect').value;
+            const numRatings = document.querySelector('input[name="numRatings"]:checked').value;
+
+            const response = await fetch('/get_movies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ genre, numRatings })
+            });
+
+            const movies = await response.json();
+            displayMoviesToRate(movies);
+        }
+
+        function displayMoviesToRate(movies) {
+            const movieList = document.getElementById('movieList');
+            movieList.innerHTML = '';
+
+            movies.forEach(movie => {
+                const movieElement = document.createElement('div');
+                movieElement.className = 'flex items-start space-x-4 p-4 border rounded';
+                movieElement.innerHTML = `
+                    <img src="${movie.poster_url}" alt="${movie.title}" class="w-32">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">${movie.title}</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex space-x-2">
+                                ${[1,2,3,4,5].map(star => `
+                                    <button class="star-rating text-2xl" data-movie="${movie.title}" data-rating="${star}">
+                                        ☆
+                                    </button>
+                                `).join('')}
+                            </div>
+                            <button class="not-seen ml-4 border-2 border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white" data-movie="${movie.title}">
+                                Haven't watched
+                            </button>
+                        </div>
+                        <a href="${movie.tmdb_url}" target="_blank" class="text-blue-600 hover:underline">More info here</a>
+                    </div>
+                `;
+                movieList.appendChild(movieElement);
+            });
+
+            document.getElementById('genrePage').classList.add('hidden');
+            document.getElementById('ratingPage').classList.remove('hidden');
+        }
+
+        // Add loading overlay handling
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        // Update getRecommendations to show loading
+        async function getRecommendations() {
+            const ratings = {};
+            document.querySelectorAll('.star-rating.selected').forEach(star => {
+                ratings[star.dataset.movie] = parseInt(star.dataset.rating);
+            });
+            document.querySelectorAll('.not-seen.selected').forEach(btn => {
+                ratings[btn.dataset.movie] = 'Not seen';
+            });
+
+            // Show loading page
+            document.getElementById('ratingPage').classList.add('hidden');
+            document.getElementById('loadingPage').classList.remove('hidden');
+
+            const response = await fetch('/get_recommendations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ratings: Object.values(ratings),
+                    genre: document.getElementById('genreSelect').value,
+                    numSuggestions: document.querySelector('input[name="numSuggestions"]:checked').value
+                })
+            });
+
+            const recommendations = await response.json();
+            
+            // Hide loading page and show recommendations
+            document.getElementById('loadingPage').classList.add('hidden');
+            displayRecommendations(recommendations);
+        }
+
+        function displayRecommendations(recommendations) {
+            // Implementation similar to your Tkinter version
+            document.getElementById('ratingPage').classList.add('hidden');
+            document.getElementById('recommendationsPage').classList.remove('hidden');
+            
+            // Display recommended movies
+            const recommendedContainer = document.getElementById('recommendedMovies');
+            recommendedContainer.innerHTML = recommendations.recommended.map(movie => createMovieCard(movie)).join('');
+            
+            // Display must-see movies
+            const mustSeeContainer = document.getElementById('mustSeeMovies');
+            mustSeeContainer.innerHTML = recommendations.mustsee.map(movie => createMovieCard(movie)).join('');
+        }
+
+        function createMovieCard(movie) {
+            return `
+                <div class="flex items-start space-x-4 p-4 border rounded">
+                    <img src="${movie.poster_url}" alt="${movie.title}" class="w-48">
+                    <div>
+                        <h3 class="text-2xl font-bold text-blue-900 mb-2">${movie.title}</h3>
+                        <div class="text-xl mb-2">${'★'.repeat(Math.round(movie.rating))}${'☆'.repeat(5-Math.round(movie.rating))}</div>
+                        <p class="mb-2">Length: ${movie.length} mins</p>
+                        <p class="mb-2">Director: ${movie.director}</p>
+                        <p class="mb-2">Actors: ${movie.actors}</p>
+                        <p class="mb-4 italic">${movie.plot}</p>
+                        <a href="${movie.trailer_url}" target="_blank" class="text-blue-600 hover:underline">Watch Trailer</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Add event listeners for star ratings and "Not seen" buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('star-rating')) {
+                const movie = e.target.dataset.movie;
+                const rating = e.target.dataset.rating;
+                document.querySelectorAll(`[data-movie="${movie}"]`).forEach(star => {
+                    star.classList.remove('selected');
+                    if (star.classList.contains('star-rating')) {
+                        star.textContent = parseInt(star.dataset.rating) <= rating ? '★' : '☆';
+                    }
+                });
+                e.target.classList.add('selected');
+            } else if (e.target.classList.contains('not-seen')) {
+                const movie = e.target.dataset.movie;
+                document.querySelectorAll(`[data-movie="${movie}"]`).forEach(el => {
+                    el.classList.remove('selected');
+                    if (el.classList.contains('star-rating')) {
+                        el.textContent = '☆';
+                    }
+                });
+                e.target.classList.add('selected');
+            }
+        });
+    </script>
+</body>
+</html>
