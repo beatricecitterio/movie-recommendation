@@ -28,55 +28,52 @@ def create_scrollable_frame(root):
 
 
 def open_genre_page():
-    # Clear previous entries
     for widget in root.winfo_children():
-        widget.destroy() #we clear previous widgets to create the new page
+        widget.destroy() 
 
-    # First Page - Genre and Number of Ratings Selection
-    tk.Label(root, text="Which genre are you in the mood for?",font=("Helvetica", 20, 'bold'), fg="darkred", bg="white" ).pack(pady=20) # we add to the root the label select genre, with some space (padding, pady) around it
+    # GENRE SELECTION
+    tk.Label(root, text="Which genre are you in the mood for?",font=("Helvetica", 20, 'bold'), fg="darkred", bg="white" ).pack(pady=20) 
     global genre_var
-    genre_var = tk.StringVar() #create genre var where some input will be stored
-    genres = ['Action', 'Adventure', 'Animation', 'Children', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']
-    genre_dropdown = ttk.Combobox(root, textvariable=genre_var, values=genres, state='readonly', foreground="darkred") #create pop down list, you say that this is a variable and link it to genre_var (automatically stores the selection of the user)
+    genre_var = tk.StringVar() 
+    genres = ['Action', 'Adventure', 'Animation', 'Children', 'Comedy', 'Crime', 'Documentary', 'Drama', 
+              'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']
+    genre_dropdown = ttk.Combobox(root, textvariable=genre_var, values=genres, state='readonly', foreground="darkred") 
     genre_dropdown.pack(pady=5)
-    genre_dropdown.current(0) #i think here 'Action' will show up, whereas we could add something like empty space or 'select genre' or something else
+    genre_dropdown.current(0) 
 
-    # Number of Ratings Selection
-    tk.Label(root, text="Choose the number of movies to rate:",font=("Helvetica", 16, 'bold'), fg="darkred", bg="white").pack(pady=15) #same logic to create 
+    # NUMBER OF RATINGS SELECTION
+    tk.Label(root, text="Choose the number of movies to rate:",font=("Helvetica", 16, 'bold'), fg="darkred", bg="white").pack(pady=15) 
     global num_ratings_var
     num_ratings_var = tk.IntVar()
-    num_ratings_var.set(5) #sure needed? but doesn't hurt
+    num_ratings_var.set(5) 
     ttk.Radiobutton(root, text="5", variable=num_ratings_var, value=5, style="TRadiobutton").pack(pady=5)
     ttk.Radiobutton(root, text="10", variable=num_ratings_var, value=10, style="TRadiobutton").pack(pady=5)
-    # Next Button
+
+    # NEXT BUTTON
     tk.Button(root, text="Next", command=open_rating_page, relief="flat").pack(pady=20) 
     return num_ratings_var, genre_var
 
-
-
-# Move to rating page
 def open_rating_page():
     genre = genre_var.get()
     num_ratings = num_ratings_var.get()
 
-    # Clear previous entries
     for widget in root.winfo_children():
-        widget.destroy() #we clear previous widgets to create the new page
+        widget.destroy() 
 
-    # Movie Ratings Input
+    # MOVIE RATINGS INPUT
     global rating_entries
     rating_entries = {}
     tk.Label(root, text="Rate the following movies:", font=("Helvetica", 20, 'bold'), fg="darkred", bg="white").pack(pady=(20, 5))
     tk.Label(root, text="From 0 to 5, .5 increments are allowed, or 'Not seen'", font=("Helvetica", 15), fg="darkred", bg="white").pack(pady=(5, 10))
 
-    movies = movies_to_rate(genre, num_ratings) #where do we get the num ratings var?
+    movies = movies_to_rate(genre, num_ratings) 
     for movie in movies:
         tk.Label(root, text=movie, font=("Helvetica", 14), bg="white", fg="black").pack(pady=2)
         entry = tk.Entry(root)
         entry.pack(pady=2)
         rating_entries[movie] = entry
 
-    # Number of Recommendations Selection
+    # SELECTION OF NUMBER OF SUGGESTIONS
     tk.Label(root, text="How many suggestions would you like to get?", font=("Helvetica", 16, 'bold'), fg="darkred", bg="white").pack(pady=(15,5))
     global num_suggestions_var
     num_suggestions_var = tk.IntVar()
@@ -85,38 +82,10 @@ def open_rating_page():
     ttk.Radiobutton(root, text="3", variable=num_suggestions_var, value=3, style="TRadiobutton").pack()
     ttk.Radiobutton(root, text="5", variable=num_suggestions_var, value=5, style="TRadiobutton").pack()
 
-    # Recommend Button
+    # NEXT BUTTON
     tk.Button(root, text="Next", command=process_ratings, relief="flat").pack(pady=20)
 
-# Process ratings before moving to recommendation page
 def process_ratings():
-    # Clear previous entries
-    # for widget in root.winfo_children():
-    #     widget.destroy() #we clear previous widgets to create the new page
-
-    #Insert GIF 
-    # download GIF here: https://images.app.goo.gl/wfK7KAYZPbeEAnF79
-    # file = "/Users/matildedolfato/Desktop/popcorns.gif"
-    # info = Image.open(file)
-    # frames = info.n_frames  # number of frames
-    # photoimage_objects = []
-    # for i in range(frames):
-    #     obj = tk.PhotoImage(file=file, format=f"gif -index {i}")
-    #     photoimage_objects.append(obj)
-
-    # def animation(current_frame=0):
-    #     global loop
-    #     image = photoimage_objects[current_frame]
-    #     gif_label.configure(image=image)
-    #     current_frame = current_frame + 1
-    #     if current_frame == frames:
-    #         current_frame = 0
-    #     loop = root.after(info.info['duration'] , lambda: animation(current_frame))
-
-    # gif_label = tk.Label(root, image="")
-    # gif_label.pack()
-    # animation()
-
     global user_ratings
     user_ratings = []
     try:
@@ -136,25 +105,21 @@ def process_ratings():
     open_recommendation_page()
 
 def open_recommendation_page():
-    # Clear previous entries
     for widget in root.winfo_children():
         widget.destroy()
 
-    # Create scrollable frame
     scrollable_frame = create_scrollable_frame(root)
 
-    # Get recommendations
     genre = genre_var.get()
     num_suggestions = num_suggestions_var.get()
     recommended_movies, mustsee_movies = suggestion(user_ratings, genre, len(user_ratings), num_suggestions)
 
-    # Header
+    # HEADER
     tk.Label(scrollable_frame, text="Recommended movies for you!", font=("Helvetica", 24, "bold"), fg="darkred", bg="white", anchor="w", justify="left").pack(pady=(20, 10), anchor='w')
     tk.Label(scrollable_frame, text="Based on your likings and mood:", font=("Helvetica", 20, "bold"), fg="darkred", bg="white", anchor="w", justify="left").pack(pady=(10, 5), anchor='w')
 
-    # Display Recommendations with Details
+    # RECOMMENDATIONS
     for movie in recommended_movies:
-        # Fetch additional details
         movie_info = fetch_movie_info(format_title(movie))
 
         if not movie_info:
@@ -169,11 +134,9 @@ def open_recommendation_page():
                 'Trailer URL': 'No trailer available'
             }
 
-        # Movie Frame
         movie_frame = tk.Frame(scrollable_frame, bg='white')
         movie_frame.pack(pady=10, padx=10, anchor='w', fill='x')
 
-        # Details
         details_frame = tk.Frame(movie_frame, bg='white', height=200)  # Fixed height
         details_frame.grid(row=0, column=1, sticky='w')
 
@@ -184,13 +147,13 @@ def open_recommendation_page():
         tk.Label(details_frame, text=f"Plot: {movie_info['Plot']}", wraplength=500, font=("Helvetica", 14, "italic"), fg="black", bg="white").pack(pady=5, anchor='w')
         tk.Label(details_frame, text=f"You can find the movie on: {movie_info['Platforms']}", wraplength=500, font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
 
-        # Trailer Link
+        # TRAILER
         trailer_url = movie_info['Trailer URL']
         link = tk.Label(details_frame, text="Watch Trailer", font=("Helvetica", 14, "underline"), fg="blue", bg='white', cursor="hand2")
         link.pack(pady=5, anchor='w')
         link.bind("<Button-1>", lambda e, url=trailer_url: webbrowser.open(url))
 
-        # Poster
+        # POSTER
         poster_url = movie_info['Poster URL']
         try:
             response = requests.get(poster_url)
@@ -204,23 +167,20 @@ def open_recommendation_page():
         except:
             pass
 
-    # Must-see Movies Section
+    # MUST SEE RECOMMENDATIONS
     must_see_frame = tk.Frame(scrollable_frame, bg='white')
     must_see_frame.pack(pady=(20, 10), padx=10, anchor="w", fill='x')
 
-    # Title for must-see section
+    # HEADER
     tk.Label(must_see_frame, text="And some must-sees!", 
             font=("Helvetica", 20, "bold"), fg='darkred', bg='white', anchor='w', justify='left').pack(pady=(10, 5), anchor='w')
-
 
     for movie in mustsee_movies:
         movie_info = fetch_movie_info(format_title(movie))
 
-        # Movie Frame
         movie_frame = tk.Frame(must_see_frame, bg='white')
         movie_frame.pack(pady=10, padx=10, anchor='w', fill='x')
 
-        # Details
         details_frame = tk.Frame(movie_frame, bg='white', height=200)  # Fixed height
         details_frame.grid(row=0, column=1, sticky='w')
 
@@ -231,7 +191,7 @@ def open_recommendation_page():
         tk.Label(details_frame, text=f"Plot: {movie_info['Plot']}", wraplength=500, font=("Helvetica", 14, "italic"), fg="black", bg="white").pack(pady=5, anchor='w')
         tk.Label(details_frame, text=f"You can find the movie on: {movie_info['Platforms']}", wraplength=500, font=("Helvetica", 14), fg="black", bg="white").pack(pady=2, anchor='w')
 
-        # Poster
+        # POSTER
         poster_url = movie_info['Poster URL']
         try:
             response = requests.get(poster_url)
@@ -245,7 +205,7 @@ def open_recommendation_page():
         except:
             pass
 
-        # Trailer Link
+        # TRAILER
         trailer_url = movie_info['Trailer URL']
         link = tk.Label(details_frame, text="Watch Trailer", font=("Helvetica", 14, "underline"), fg="blue", bg='white', cursor="hand2")
         link.pack(pady=5, anchor='w')
@@ -254,35 +214,29 @@ def open_recommendation_page():
     scrollable_frame.update_idletasks()
     scrollable_frame.master.configure(scrollregion=scrollable_frame.master.bbox("all"))
 
-
-# GUI Window Setup
-root = tk.Tk() # we define here the current window, root
+# GUI SETUP
+root = tk.Tk() 
 root.title("Movie Recommendation System")
-root.geometry("600x600") #penso sia una sorta di titolo 
-root.configure(bg="white") #configure background
+root.geometry("600x600") 
+root.configure(bg="white") 
 
-# Starting Page
-
-# botton_frame = tk.Frame(root, bg="ivory")
-# botton_frame.pack(expand=True, fill='both', padx=20, pady=20) #configure background frame 
+# WELCOME PAGE
 heading = tk.Label(root, text="Welcome to our movie recommendation system!", font=("helvetica", 24, "bold"), fg="darkred", bg="white")
-heading.pack(pady=30) #place heading on the frame, with style
+heading.pack(pady=30) 
 
-# Add an image at the top of the page
 image = Image.open("cinema.jpeg") 
-image = image.resize((300, 200))  # Resize image if needed
+image = image.resize((300, 200))  
 photo = ImageTk.PhotoImage(image)
 tk.Label(root, image=photo, bg="white").pack(pady=10)
-root.image = photo  # Keep a reference to avoid garbage collection
+root.image = photo  
 
+# START BUTTON
 start_button = tk.Button(root, text="Snacks ready, let's choose the movie", font=("Helvetica", 16, "bold"),fg="darkblue",bg="white",relief="flat",borderwidth=0, command=open_genre_page)
 start_button.pack(pady=20)
 
-#global styles 
+# GLOBAL STYLES
 style_radiobutt = ttk.Style()
 style_radiobutt.configure('TRadiobutton', font=('Helvetica', 12))
 style_radiobutt.map('TRadiobutton', foreground=[('selected', 'darkred'),('!selected', 'gray')], background=[('selected', 'white'), ('!selected', 'white')])
 
-
-# Start GUI Main Loop
 root.mainloop()
