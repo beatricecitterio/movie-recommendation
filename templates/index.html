@@ -31,14 +31,28 @@
         <img src="/static/loading.gif" alt="Loading" class="mx-auto rounded-lg shadow-lg" style="max-width: 300px;">
     </div>
 
-
+    <!-- Genre Selection Page -->
     <div id="genrePage" class="hidden container mx-auto px-4 py-8">
         <h2 class="text-3xl font-bold text-red-900 mb-6">Which genre are you in the mood for?</h2>
         <select id="genreSelect" class="block w-64 mb-6 p-2 border rounded">
             <option value="Action">Action</option>
             <option value="Adventure">Adventure</option>
             <option value="Animation">Animation</option>
-            <!-- Add other genres -->
+            <option value="Children">Children</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Crime">Crime</option>
+            <option value="Documentary">Documentary</option>
+            <option value="Drama">Drama</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Film-Noir">Film-Noir</option>
+            <option value="Horror">Horror</option>
+            <option value="Musical">Musical</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Romance">Romance</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Thriller">Thriller</option>
+            <option value="War">War</option>
+            <option value="Western">Western</option>
         </select>
 
         <h3 class="text-2xl font-bold text-red-900 mb-4">Choose the number of movies to rate:</h3>
@@ -56,6 +70,7 @@
         </button>
     </div>
 
+    <!-- Rating Page -->
     <div id="ratingPage" class="hidden container mx-auto px-4 py-8">
         <h2 class="text-3xl font-bold text-red-900 mb-6">Rate the following movies:</h2>
         <p class="text-lg text-gray-700 mb-8">Select a rating from 0 to 5 stars, or choose 'Not seen'</p>
@@ -79,8 +94,11 @@
         </button>
     </div>
 
+    <!-- Recommedations Page -->
     <div id="recommendationsPage" class="hidden container mx-auto px-4 py-8">
         <h2 class="text-3xl font-bold text-red-900 mb-6">Recommended movies for you!</h2>
+        <h3 class="text-2xl font-bold text-red-900 mb-6">Based on your taste:</h2>
+
         <div id="recommendedMovies" class="space-y-8"></div>
 
         <h2 class="text-3xl font-bold text-red-900 mt-12 mb-6">And some must-sees!</h2>
@@ -211,7 +229,6 @@
             `;
         }
 
-        // Add event listeners for star ratings and "Not seen" buttons
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('star-rating')) {
                 const movie = e.target.dataset.movie;

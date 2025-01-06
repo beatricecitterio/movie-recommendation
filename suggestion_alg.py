@@ -6,32 +6,21 @@ import os
 import zipfile
 import shutil
 
-# # WRITE THE PATH WHERE THE CSV ARE STORED HERE
-# path = '/Users/beatricecitterio'
-
-# ratings = pd.read_csv(f'{path}/ratings.csv')
-# movies = pd.read_csv(f'{path}/movies.csv')
-
-# Create directory
+# DATA DOWNLOADING
 data_dir = './movielens_data'
 os.makedirs(data_dir, exist_ok=True)
 
-# Download dataset
 os.system(f'kaggle datasets download -d garymk/movielens-25m-dataset -p {data_dir}')
 
-# Extract dataset
 zip_path = f'{data_dir}/movielens-25m-dataset.zip'
 with zipfile.ZipFile(zip_path, 'r') as zip_ref:
     zip_ref.extractall(data_dir)
 
-# Locate extracted files
 extracted_dir = os.path.join(data_dir, os.listdir(data_dir)[0])
 
-# Load CSV files
 ratings = pd.read_csv(f'{extracted_dir}/ratings.csv')
 movies = pd.read_csv(f'{extracted_dir}/movies.csv')
 shutil.rmtree(data_dir)
-
 
 def format_title(title: str):
     ''' 

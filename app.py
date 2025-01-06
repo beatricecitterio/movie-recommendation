@@ -3,6 +3,7 @@ from tmdb_api import fetch_movie_info
 from suggestion_alg import format_title, movies_to_rate, suggestion
 import requests
 from io import BytesIO
+import os
 
 app = Flask(__name__)
 
@@ -73,4 +74,5 @@ def get_recommendations():
     return jsonify(recommendations)
 
 if __name__ == '__main__':
-    app.run(debug=True, port = 5001)
+    port = int(os.environ.get("PORT", 5001))  # Default to 5000 if PORT is not set
+    app.run(host="0.0.0.0", port=port)
