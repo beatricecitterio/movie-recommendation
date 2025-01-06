@@ -67,9 +67,19 @@ def open_rating_page():
 
     movies = movies_to_rate(genre, num_ratings) 
     for movie in movies:
-        tk.Label(root, text=movie, font=("Helvetica", 14), bg="white", fg="black").pack(pady=2)
-        entry = tk.Entry(root)
-        entry.pack(pady=2)
+        movie_frame = tk.Frame(root, bg="white")
+        movie_frame.pack(pady=10)
+
+        tk.Label(movie_frame, text=movie, font=("Helvetica", 14, 'bold'), bg="white", fg="black").pack(pady=(0, 2))
+
+        movie_search_query = "+".join(movie.split())  
+        tmdb_url = f"https://www.themoviedb.org/search?query={movie_search_query}" 
+        link = tk.Label(movie_frame, text="More info here", font=("Helvetica", 12, "underline"), fg="blue", bg="white", cursor="hand2")
+        link.pack(pady=(0, 5))
+        link.bind("<Button-1>", lambda e, url=tmdb_url: webbrowser.open(url))
+
+        entry = tk.Entry(movie_frame, width=10)
+        entry.pack(pady=(0, 5))
         rating_entries[movie] = entry
 
     # SELECTION OF NUMBER OF SUGGESTIONS
@@ -83,6 +93,8 @@ def open_rating_page():
 
     # NEXT BUTTON
     tk.Button(root, text="Next", command=process_ratings, relief="flat").pack(pady=20)
+
+
 
 def show_loading_gif():
     global gif_label, frames
