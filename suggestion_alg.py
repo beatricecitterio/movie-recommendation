@@ -49,7 +49,7 @@ average_rating = pd.merge(movies, average_rating, on='movieId')
 average_rating = average_rating.drop(columns=['title', 'genres'])
 
 # now we create a subsection of the movies df for each genre
-genres = ['Action', 'Adventure', 'Animation', 'Children', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western', 'Any Genre']
+genres = ['Action', 'Adventure', 'Animation', 'Children', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']
 top_movies = {}
 for genre in genres:
     if genre == 'Any Genre':
