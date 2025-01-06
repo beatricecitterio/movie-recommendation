@@ -1,5 +1,5 @@
 # **README**
-This file explains how to use the contents of this repository. Beside the readme.md file, the repository contains the report of the project, a jpeg picture (cinema.jpeg) and three python scripts (suggestion_alg.py, movie_reco.py and tmdb_api.py).
+This file explains how to use the contents of this repository. Beside the readme.md file, the repository contains the report of the project, two gifs (loading.gif and cinema.gif) and three python scripts (suggestion_alg.py, movie_reco.py and tmdb_api.py).
 
 ## **How to use this repository**
 In order to be able to use the algorithm we developed, the user needs to first download two datasets from the following url: https://grouplens.org/datasets/movielens/32m/. <br>
@@ -30,7 +30,7 @@ Besides the main function, ```fetch_movie_info()```, the script also includes tw
 
 ### **movie_reco.py**
 This file implements the GUI of our application, using Python's Tkinter library. We decided to build a multipage GUI as follows:
-- **welcome page**: contains a message and a picture (cinema.jpeg). There is a start button which takes the user to the next page
+- **welcome page**: contains a message and a gif (cinema.gif). There is a start button which takes the user to the next page
 - **genre selection page**: this page is made of a dropdown menu where the user can choose one of the available genres. Then, the user has the possibility to choose the number of movies to rate (either 5 or 10, for a more accurate suggestion). The ```next``` button takes the user to the rating page
 - **movie rating page**: this page displays a list of the most popular movies of the selected genre. The user is supposed to rate them from 0 to 5 (only .5 increments are allowed), or write 'Not seen'. Finally, the user can choose how many suggestions to receive, and the ```next``` takes them to the next page.
 - **recommendation page**: the ```process_ratings()``` function collects the input of the user and validates it. If valid, user is taken to the recommendation page, where the output of ```suggestion()``` is showed. In particular, for each movie, the graphic also displays a series of additional information, such as movie poster, actors, director, length, plot...

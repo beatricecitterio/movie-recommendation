@@ -26,7 +26,6 @@ def create_scrollable_frame(root):
 
     return scrollable_frame
 
-
 def open_genre_page():
     for widget in root.winfo_children():
         widget.destroy() 
@@ -85,6 +84,38 @@ def open_rating_page():
     # NEXT BUTTON
     tk.Button(root, text="Next", command=process_ratings, relief="flat").pack(pady=20)
 
+def show_loading_gif():
+    global gif_label, frames
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    tk.Label(root, text="Wait for it...", font=("Helvetica", 24, 'bold'), fg="darkblue", bg="white").pack(pady=20)
+
+    gif_label = tk.Label(root, bg="white")
+    gif_label.pack(pady=20)
+
+    gif_path = "loading.gif"  
+    gif = Image.open(gif_path)
+
+    frames = []
+    try:
+        while True:
+            frame = ImageTk.PhotoImage(gif)
+            frames.append(frame)
+            gif.seek(len(frames)) 
+    except EOFError:
+        pass 
+
+    def update(index):
+        if gif_label.winfo_exists(): 
+            frame = frames[index]
+            gif_label.config(image=frame)
+            index = (index + 1) % len(frames)
+            root.after(100, update, index)  
+
+    update(0)  
+
 def process_ratings():
     global user_ratings
     user_ratings = []
@@ -102,7 +133,10 @@ def process_ratings():
     except ValueError:
         messagebox.showerror("Input Error!", "Ratings must be between 0 and 5, in 0.5 increments, or 'Not seen'.")
         return
-    open_recommendation_page()
+
+    show_loading_gif()
+
+    root.after(3000, open_recommendation_page)  
 
 def open_recommendation_page():
     for widget in root.winfo_children():
@@ -224,11 +258,29 @@ root.configure(bg="white")
 heading = tk.Label(root, text="Welcome to our movie recommendation system!", font=("helvetica", 24, "bold"), fg="darkred", bg="white")
 heading.pack(pady=30) 
 
-image = Image.open("cinema.jpeg") 
-image = image.resize((300, 200))  
-photo = ImageTk.PhotoImage(image)
-tk.Label(root, image=photo, bg="white").pack(pady=10)
-root.image = photo  
+gif_path = "cinema.gif"  
+gif = Image.open(gif_path)
+
+frames = []
+try:
+    while True:
+        frame = ImageTk.PhotoImage(gif)
+        frames.append(frame)
+        gif.seek(len(frames))  
+except EOFError:
+    pass 
+
+gif_label = tk.Label(root, bg="white")
+gif_label.pack(pady=10)
+
+def update(index):
+    if gif_label.winfo_exists(): 
+        frame = frames[index]
+        gif_label.config(image=frame)
+        index = (index + 1) % len(frames)
+        root.after(100, update, index) 
+
+update(0) 
 
 # START BUTTON
 start_button = tk.Button(root, text="Snacks ready, let's choose the movie", font=("Helvetica", 16, "bold"),fg="darkblue",bg="white",relief="flat",borderwidth=0, command=open_genre_page)
