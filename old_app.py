@@ -80,17 +80,15 @@ def open_rating_page():
         def highlight_stars(frame, value):
             for idx, widget in enumerate(frame.winfo_children()):
                 if isinstance(widget, tk.Button):
-                    # Highlight stars based on numeric value
-                    if isinstance(value, int):  # Check if value is a number
+                    if isinstance(value, int): 
                         if widget.cget('text') == 'Not seen':
-                            widget.config(bg="white", fg="black")  # Reset 'Not seen'
+                            widget.config(bg="white", fg="black")  
                         else:
-                            widget.config(fg="gold" if idx < value else "gray")  # Highlight stars
-                    # Highlight 'Not seen' button if selected
+                            widget.config(fg="gold" if idx < value else "gray")  
                     if widget.cget('text') == 'Not seen' and value == 'Not seen':
-                        widget.config(bg="gold", fg="darkred")  # Highlight
+                        widget.config(bg="gold", fg="darkred")  
                     elif widget.cget('text') == 'Not seen':
-                        widget.config(bg="white", fg="black")  # Reset if not selected
+                        widget.config(bg="white", fg="black")  
 
 
         for i in range(1, 6):
@@ -109,14 +107,11 @@ def open_rating_page():
         movie_frame = tk.Frame(scrollable_frame, bg="white")
         movie_frame.pack(pady=20, padx=10, anchor='center')
 
-        # Fetch movie info
         movie_info = fetch_movie_info(format_title(movie))
         poster_url = movie_info.get('Poster URL', 'No Image Available')
 
-        # Display Movie Title
         tk.Label(movie_frame, text=movie, font=("Helvetica", 14, 'bold'), bg="white", fg="black").pack(pady=(0, 5))
 
-        # Display Poster
         try:
             response = requests.get(poster_url)
             img_data = BytesIO(response.content)
@@ -129,10 +124,8 @@ def open_rating_page():
         except:
             tk.Label(movie_frame, text="No Image", bg="white", fg="black").pack(pady=(0, 5))
 
-        # Create Star Selector
         create_star_selector(movie_frame, movie)
 
-        # TMDb Link
         movie_search_query = "+".join(movie.split())
         tmdb_url = f"https://www.themoviedb.org/search?query={movie_search_query}"
         link = tk.Label(movie_frame, text="More info here", font=("Helvetica", 12, "underline"), fg="blue", bg="white", cursor="hand2")
@@ -163,7 +156,7 @@ def show_loading_gif():
     gif_label = tk.Label(root, bg="white")
     gif_label.pack(pady=20)
 
-    gif_path = "loading.gif"  
+    gif_path = "static/loading.gif"  
     gif = Image.open(gif_path)
 
     frames = []
@@ -341,7 +334,7 @@ root.configure(bg="white")
 heading = tk.Label(root, text="Welcome to our movie recommendation system!", font=("helvetica", 24, "bold"), fg="darkred", bg="white")
 heading.pack(pady=30) 
 
-gif_path = "cinema.gif"  
+gif_path = "static/cinema.gif"  
 gif = Image.open(gif_path)
 
 frames = []
