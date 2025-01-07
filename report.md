@@ -3,7 +3,7 @@
 
 Our project is a **movie recommendation system**, that has the form of a **webb application** written in the **Python** language. We intend our app to be used by anyone looking for some inspiration for a movie to watch, comfortably from their sofa on their pc. 
 
-The main components are the **recommendation algorithm** and the **GUI**.
+The main components are the **recommendation algorithm** and the **GUI**.  
 The GUI is opened through a back-end server, which automatically opens a web page. It is composed by a sequence of multiple windows: after a first welcome page, in the first windows the user inserts which genre of movie they would like to watch and how much they enjoyed a chosen number of movies; then these inputs are processed by the algorithm, and finally a window with suggestions and info on the movies is displayed.  
 A secondary component of our project is a program to retrieve info from a public API that allowed us to display more information on the movies to be rated and suggested.  
 In the README file, available in the GitHub repo, more information on the main algorithm and the logic of the program is provided. 
