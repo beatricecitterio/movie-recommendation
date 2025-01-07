@@ -4,6 +4,8 @@ from suggestion_alg import format_title, movies_to_rate, suggestion
 import requests
 from io import BytesIO
 import os
+import webbrowser
+from threading import Timer
 
 app = Flask(__name__)
 
@@ -73,6 +75,10 @@ def get_recommendations():
     
     return jsonify(recommendations)
 
+def open_browser():
+    webbrowser.open_new('http://localhost:5001/')
+
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5001))  # Default to 5000 if PORT is not set
+    port = int(os.environ.get("PORT", 5001))  
+    Timer(1, open_browser).start()  
     app.run(host="0.0.0.0", port=port)
