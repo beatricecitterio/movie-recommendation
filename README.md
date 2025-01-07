@@ -1,5 +1,5 @@
 # **README**
-This file explains how to use the contents of this repository. Beside the ```readme.md```, the repository contains the report of the project, two gifs (```loading.gif``` and ```cinema.gif```, contained in the ```static``` folder), four python scripts (```app.py```, ```old_app.py```, ```suggestion_alg.py``` and ```tmdb_api.py```) and an html file contained in the templates folder. Finally, ```requirements.txt``` contains the dependencies which need to be installed.
+This file explains how to use the contents of this repository. Besides the ```readme.md```, the repository contains the report of the project, two gifs (```loading.gif``` and ```cinema.gif```, contained in the ```static``` folder), four python scripts (```app.py```, ```old_app.py```, ```suggestion_alg.py``` and ```tmdb_api.py```) and an html file contained in the templates folder. Finally, ```requirements.txt``` contains the dependencies which need to be installed.
 
 ## **How to use this repository**
 To use our recommendation system, the user should first clone the repository by running: <br>
@@ -24,7 +24,7 @@ Once we have the ```pivot_df```, we compute the dissimilarity of each user with 
 
 Then, we consider the 20 users who are most similar to new_user, in terms of taste, and we compute an average of their ratings. We discard movies that the new_user has already seen, and we output as suggestion the movies with highest average rating (when there is a tie, we output the most popular).<br>
 
-Finally, we decided to also include some must-see suggestions to the user, i.e. the most popular movies of the genre they selected, excluding clearly the movies that they have already rated.
+Finally, we decided to also include some must-see suggestions to the user, i.e. the most popular movies of the genre they selected, clearly excluding the movies that they have already rated.
 
 ### **tmdb_api.py**
 The purpose of this file is to fetch some data from the TMDb (The Movie Database) API. In particular, for each movie, the script retrieves information about the title, the runtime, the director, the main actors. It provides also an overview of the plot, the link to the trailer and to the poster image and, finally, the list of streaming platforms it is available on. <br>
