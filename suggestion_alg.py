@@ -107,7 +107,7 @@ def suggestion(new_rating: list, genre: str, n=5, number_of_suggestions=3):
     user_ratings = user_ratings[user_ratings['movieId'].isin(movies_by_genre.movieId)]
 
     user_ratings_filtered = user_ratings.sort_values(by='rating', ascending=False)
-    suggested_movies = user_ratings_filtered[~user_ratings_filtered['movieId'].isin(new_rating_filtered.keys())]
+    suggested_movies = user_ratings_filtered[~user_ratings_filtered['movieId'].isin(new_rating_dict.keys())]
     suggested_movies = suggested_movies.sort_values(by='movieId')
     suggested_movies = suggested_movies.merge(movie_counts).sort_values(by=['rating', 'count'], ascending=False)
     final_suggestions_df = suggested_movies.drop_duplicates(subset='movieId').head(number_of_suggestions)
@@ -115,7 +115,7 @@ def suggestion(new_rating: list, genre: str, n=5, number_of_suggestions=3):
     final_suggestions = movies[movies['movieId'].isin(final_suggestions_df.movieId)][['Formatted Title', 'movieId']]
     final_suggestions = final_suggestions.merge(average_rating[['movieId', 'avg_rating']], on='movieId')
 
-    mustsee_suggestions_bygenre = movies_by_genre[~movies_by_genre['movieId'].isin(new_rating_filtered.keys()) 
+    mustsee_suggestions_bygenre = movies_by_genre[~movies_by_genre['movieId'].isin(new_rating_dict.keys())
                                                   & ~movies_by_genre['movieId'].isin(final_suggestions_df['movieId'])]
     mustsee_suggestions_df = mustsee_suggestions_bygenre.merge(movie_counts).sort_values(by=['count'], ascending=False).head(number_of_suggestions)
     mustsee_suggestions = movies[movies['movieId'].isin(mustsee_suggestions_df.movieId)][['Formatted Title', 'movieId']]

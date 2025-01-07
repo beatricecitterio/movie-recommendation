@@ -6,3 +6,10 @@ scikit-learn==1.3.0
 numpy==1.26.0
 Pillow==10.0.0
 kaggle
+re
+os
+zipfile
+shutil
+io
+webbrowser
+threading
