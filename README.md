@@ -5,7 +5,14 @@ This file explains how to use the contents of this repository. Besides the ```re
 To use our recommendation system, the user should first clone the repository by running: <br>
 ```git clone https://github.com/beatricecitterio/movie-recommendation.git```<br>
 ```cd movie-recommendation``` <br>
-Then, they should install the dependencies (```pip install -r requirements.txt```) and finally run ```python app.py```. This will open a web page with an interactive interface. <br>
+
+Then, we suggest to create a new environment:<br> 
+```conda create --name env_name python``` <br>
+```conda acitvate env_name``` <br>
+
+Then, the user should install the dependencies:
+```pip install -r requirements.txt```<br>
+and finally run ```python app.py```. This will open a web page with an interactive interface. <br>
 
 This command will automatically also install the datasets we used, which come from The MovieLens Datasets -25M. In particular, we only used ```movies.csv``` and ```ratings.csv```.
 
