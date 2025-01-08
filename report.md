@@ -14,10 +14,6 @@ We overcome these hurdles by improving the final form of our project developing 
 Currently, the user still needs to wait some seconds while the necessary datasets get installed. However, the program does that by itself and waiting times are definitely reduced, thus we are satisfied with the solution. Now our reco system is easier to use comfortably from one's sofa!  
 As for longer running times of the suggestion pipeline, we tackled this problem displaying a funny gif during the longest process, in order for the user to be entratained during the waiting time. 
 
-'''
-problema dei not seen
-'''
-
 As we were working on this project, some additional ideas came to our mind. Some of them are implemented, like to provide the user with the trailer and average rating of the movie suggested, to help them choose.
 Mainly, we would like to be able to provide users with a link from where to use the recommendation system web app, instead of downloading it from the command line. 
 Moreover, we think that the reco system could be further implemented as an extension for common research engines like Google, so that it would be more accessible and hopefully popular.  
