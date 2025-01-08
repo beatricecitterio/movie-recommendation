@@ -1,5 +1,6 @@
 # **Movie Recommendation System**
-## **Project Report** by Beatrice Citterio and Matilde Dolfato
+## **Project Report**
+This file contains the report of the final project for Software Engineering (20875) by Beatrice Citterio and Matilde Dolfato.
 ### **Overview of the Project**
 Our project is a **movie recommendation system**, that has the form of a **web application** written in the **Python** language. We intend our app to be used by anyone looking for some inspiration for a movie to watch, comfortably from their sofa on their pc. 
 
