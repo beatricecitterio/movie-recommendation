@@ -158,7 +158,6 @@
             document.getElementById('ratingPage').classList.remove('hidden');
         }
 
-        // Add loading overlay handling
         function showLoading() {
             document.getElementById('loadingOverlay').classList.remove('hidden');
         }
@@ -167,17 +166,24 @@
             document.getElementById('loadingOverlay').classList.add('hidden');
         }
 
-        // Update getRecommendations to show loading
         async function getRecommendations() {
-            const ratings = {};
-            document.querySelectorAll('.star-rating.selected').forEach(star => {
-                ratings[star.dataset.movie] = parseInt(star.dataset.rating);
-            });
-            document.querySelectorAll('.not-seen.selected').forEach(btn => {
-                ratings[btn.dataset.movie] = 'Not seen';
+            const ratings = [];
+            const movieElements = document.querySelectorAll('[data-movie]');
+            const uniqueMovies = new Set([...movieElements].map(el => el.dataset.movie));
+            
+            uniqueMovies.forEach(movie => {
+                const selectedStar = document.querySelector(`.star-rating.selected[data-movie="${movie}"]`);
+                const notSeen = document.querySelector(`.not-seen.selected[data-movie="${movie}"]`);
+                
+                if (notSeen) {
+                    ratings.push('Not seen');
+                } else if (selectedStar) {
+                    ratings.push(parseInt(selectedStar.dataset.rating));
+                } else {
+                    throw new Error('Please rate all movies or mark as "Not seen"');
+                }
             });
 
-            // Show loading page
             document.getElementById('ratingPage').classList.add('hidden');
             document.getElementById('loadingPage').classList.remove('hidden');
 
@@ -185,29 +191,24 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    ratings: Object.values(ratings),
+                    ratings,
                     genre: document.getElementById('genreSelect').value,
                     numSuggestions: document.querySelector('input[name="numSuggestions"]:checked').value
                 })
             });
 
             const recommendations = await response.json();
-            
-            // Hide loading page and show recommendations
             document.getElementById('loadingPage').classList.add('hidden');
             displayRecommendations(recommendations);
         }
 
         function displayRecommendations(recommendations) {
-            // Implementation similar to your Tkinter version
             document.getElementById('ratingPage').classList.add('hidden');
             document.getElementById('recommendationsPage').classList.remove('hidden');
             
-            // Display recommended movies
             const recommendedContainer = document.getElementById('recommendedMovies');
             recommendedContainer.innerHTML = recommendations.recommended.map(movie => createMovieCard(movie)).join('');
             
-            // Display must-see movies
             const mustSeeContainer = document.getElementById('mustSeeMovies');
             mustSeeContainer.innerHTML = recommendations.mustsee.map(movie => createMovieCard(movie)).join('');
         }
